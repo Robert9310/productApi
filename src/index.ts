@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import helmet from "helmet";
 //import * as productCRUD from './product-crud';
 import * as productCRUD from './product-crud-mongo';
-//import CognitoExpress from 'cognito-express';
+import authRouter from './router/authRouter'
 
 const CognitoExpress = require("cognito-express");
 
@@ -34,6 +34,7 @@ app.use(express.json());
 
 
 const authorizedRoute = express.Router();
+const AuthRouter = express.Router();
 
 const cognitoExpress = new CognitoExpress({
     region: "us-east-1",
@@ -77,7 +78,8 @@ authorizedRoute.post('/products',productCRUD.createProduct);
 authorizedRoute.post('/updateproduct',productCRUD.updateroduct);
 authorizedRoute.post('/deleteproduct',productCRUD.deleteproduct);
 
-app.use("/product/api",authorizedRoute);
+app.use("/api/product",authorizedRoute)
+app.use('/api/auth', authRouter)
 
 
 const PORT: number = parseInt(process.env.PORT as string, 10);
