@@ -37,10 +37,24 @@ export const login = async (req, res) => {
         }
 
         const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider()
-        const { AuthenticationResult } = await cognitoidentityserviceprovider.adminInitiateAuth(params).promise()
-        const { AccessToken, ExpiresIn, TokenType, RefreshToken } = AuthenticationResult
 
-        res.send({AccessToken, ExpiresIn, TokenType, RefreshToken })
+        const {AuthenticationResult}  = await cognitoidentityserviceprovider.adminInitiateAuth(params).promise()
+        // Example of how to respond a challenge
+        /* if (data.ChallengeName === 'NEW_PASSWORD_REQUIRED') {
+            cognitoidentityserviceprovider.respondToAuthChallenge({
+            ClientId: CLIENT_ID,
+            ChallengeName: 'NEW_PASSWORD_REQUIRED',
+            ChallengeResponses: {
+                NEW_PASSWORD: 'Admin2021*',
+                USERNAME: 'robert930810@gmail.com',
+                SECRET_HASH: getHastSecretByUsername('robert930810@gmail.com')
+            },
+            Session: data.Session
+            }).promise(r => res.send(r)).catch(e => console.log(e))
+        } */
+        const { AccessToken, ExpiresIn, TokenType, RefreshToken } = AuthenticationResult
+        //console.log();
+        res.send({ AccessToken, ExpiresIn, TokenType, RefreshToken })
 
     } catch (error) {
         console.log(error)

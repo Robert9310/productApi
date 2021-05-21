@@ -27,12 +27,21 @@ export const getProductList = async (req:any, res:any) => {
     });
   };
 
-export const updateroduct = async (req:any, res:any) => {
+export const updateProduct = async (req:any, res:any) => {
     const product: Product = req.body;
-    //Update
+    products.findByIdAndUpdate(product.id,product,(err,updateData)=>{
+      if(err){
+        res.send(err);
+      }else{
+        res.send("item successfully updated");
+      }
+    });
   };
 
   export const deleteproduct = async (req:any, res:any) => {
     const productID: number = req.body['id'];
-    //delete
+    products.findByIdAndRemove(productID).then(() => {
+        res.status(200).json('Intern Deleted');
+      })
+      .catch(err => res.status(400).json('Error deleting Intern' + err))
   };

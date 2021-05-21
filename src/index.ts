@@ -3,7 +3,7 @@ import express from 'express';
 import * as dotenv from "dotenv";
 import mongoose from 'mongoose';
 import helmet from "helmet";
-//import * as productCRUD from './product-crud';
+
 import * as productCRUD from './product-crud-mongo';
 import authRouter from './router/authRouter'
 
@@ -16,15 +16,15 @@ if(!process.env.PORT){
     process.exit(1);
 }
 
-// Uncoment to connect MongoDB
-// const uri: string = "mongodb://127.0.0.1:27017/codeindepth";
-// mongoose.connect(uri, (err:any)=>{
-//     if(err){
-//         console.log(err.message);
-//     }else{
-//         console.log(`Connecting to MONGO`);
-//     }
-// })
+//Uncoment to connect MongoDB
+const uri: string = "mongodb://127.0.0.1:27017/codeindepth";
+mongoose.connect(uri, (err:any)=>{
+    if(err){
+        console.log(err.message);
+    }else{
+        console.log(`Connecting to MONGO`);
+    }
+})
 
 const app = express();
 
@@ -38,7 +38,7 @@ const AuthRouter = express.Router();
 
 const cognitoExpress = new CognitoExpress({
     region: "us-east-1",
-    cognitoUserPoolId: "us-east-1_9btadRLWs",
+    cognitoUserPoolId: "us-east-1_iirKGxV3C",
     tokenUse : "access",
     tokenExpiration: 3600,
 });
@@ -59,6 +59,7 @@ authorizedRoute.use((req,res,next)=>{
     if (req.method !== 'OPTIONS')
     {
         let accessTokenFromClient = req.headers['authorization'];
+        console.log(accessTokenFromClient);
         if (!accessTokenFromClient) return res.status(401).send("Access Token missing from header");
         cognitoExpress.validate(accessTokenFromClient, function (err:any, response:any) {
             if (err) {
@@ -75,7 +76,7 @@ authorizedRoute.use((req,res,next)=>{
 authorizedRoute.get('/',(req,res) => res.send('Welcome to NodeJs App Using Typescript'));
 authorizedRoute.get('/products', productCRUD.getProductList);
 authorizedRoute.post('/products',productCRUD.createProduct);
-authorizedRoute.post('/updateproduct',productCRUD.updateroduct);
+authorizedRoute.post('/updateproduct',productCRUD.updateProduct);
 authorizedRoute.post('/deleteproduct',productCRUD.deleteproduct);
 
 app.use("/api/product",authorizedRoute)
@@ -84,5 +85,5 @@ app.use('/api/auth', authRouter)
 
 const PORT: number = parseInt(process.env.PORT as string, 10);
 const server = app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}`);
+    console.log(`Listening on port ${PORT} started server`);
 });
