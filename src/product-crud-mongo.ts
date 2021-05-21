@@ -2,6 +2,8 @@ import { Product } from './product';
 import products from './product-schema';
 
 export const getProductList = async (req:any, res:any) => {
+    res.send({Hola: 'mundo'})
+    return;
     products.find((err: any, result: any) => {
         if (err) {
           res.send("Error!");
